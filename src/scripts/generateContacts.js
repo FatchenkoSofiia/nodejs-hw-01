@@ -1,19 +1,17 @@
+import fs from 'fs';
+import path from 'path';
 import { PATH_DB } from '../constants/contacts.js';
-import * as fs from 'node:fs/promises';
 import { createFakeContact } from '../utils/createFakeContact.js';
 
-const generateContacts = async (number) => {
-  try {
-    const data = await fs.readFile(PATH_DB, 'utf8');
-    const readData = JSON.parse(data);
-    for (let i = 1; i <= number; i += 1) {
-      const db = createFakeContact();
-      readData.push(db);
-    };
+const generateContacts = (num) => {
+    const filePath = path.resolve(PATH_DB);
+    const contacts = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
-    await fs.writeFile(PATH_DB, JSON.stringify(readData, null, 2), 'utf8');
-  } catch (error) {
-    console.log('incorrect request', error);
-  }
+    for (let i = 0; i < num; i++) {
+        contacts.push(createFakeContact());
+    }
+
+    fs.writeFileSync(filePath, JSON.stringify(contacts, null, 2));
 };
-console.log(generateContacts(5));
+
+generateContacts(5); // Згенеруйте 5 контактів за замовчуванням
